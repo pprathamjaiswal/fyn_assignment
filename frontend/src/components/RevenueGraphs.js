@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-// Helper function to format data
+// Helper function to process the transaction data
 const processTransactionData = (transactions) => {
   const dailyMap = {};
   const monthlyMap = {};
@@ -25,19 +25,17 @@ const processTransactionData = (transactions) => {
 
     const totalCost = parseFloat(transaction.total_cost);
 
-    // Daily
+    // Aggregate daily, monthly, and yearly revenue
     if (!dailyMap[day]) {
       dailyMap[day] = 0;
     }
     dailyMap[day] += totalCost;
 
-    // Monthly
     if (!monthlyMap[month]) {
       monthlyMap[month] = 0;
     }
     monthlyMap[month] += totalCost;
 
-    // Yearly
     if (!yearlyMap[year]) {
       yearlyMap[year] = 0;
     }
@@ -66,10 +64,10 @@ const RevenueGraphs = () => {
         const response = await api.get('/transactions/');
         const transactions = response.data;
 
-        // Process data
+        // Process data (daily, monthly, yearly)
         const { dailyData, monthlyData, yearlyData } = processTransactionData(transactions);
 
-        // Update state
+        // Update state with processed data
         setDailyData(dailyData);
         setMonthlyData(monthlyData);
         setYearlyData(yearlyData);
@@ -90,6 +88,8 @@ const RevenueGraphs = () => {
   return (
     <div className="graph-container">
       <h2>Revenue Graphs</h2>
+
+      {/* Daily Revenue Chart */}
       <h3>Daily Revenue</h3>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={dailyData}>
@@ -101,6 +101,8 @@ const RevenueGraphs = () => {
           <Line type="monotone" dataKey="revenue" stroke="#8884d8" />
         </LineChart>
       </ResponsiveContainer>
+
+      {/* Monthly Revenue Chart */}
       <h3>Monthly Revenue</h3>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={monthlyData}>
@@ -112,6 +114,8 @@ const RevenueGraphs = () => {
           <Line type="monotone" dataKey="revenue" stroke="#82ca9d" />
         </LineChart>
       </ResponsiveContainer>
+
+      {/* Yearly Revenue Chart */}
       <h3>Yearly Revenue</h3>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={yearlyData}>
